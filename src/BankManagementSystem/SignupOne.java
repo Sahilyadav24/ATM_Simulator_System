@@ -21,8 +21,8 @@ public class SignupOne extends JFrame implements ActionListener {
     SignupOne(){
         setLayout(null);
 
-        int min = 1000; // Minimum value (inclusive)
-        int max = 9999; // Maximum value (inclusive)
+        int min = 1000;
+        int max = 9999;
         Random ran = new Random();
         random =ran.nextInt(max - min + 1) + min;
 

@@ -20,8 +20,8 @@ public class connectJDBC {
             Connection c =DriverManager.getConnection(url,username,password);
             s= c.createStatement();
             System.out.println("connection successful");
-            c.close();
-
+//            c.close();
+            
         }catch (Exception e){
             System.out.println(e);
         }

@@ -171,11 +171,13 @@ import java.awt.event.ActionListener;
             String adhar = adhartext.getText();
 
             try {
-                setVisible(true);
+
                     connectJDBC com = new connectJDBC();
                     String querytwo = "insert into signupTwo values ('"+religion+"','"+Category+"','"+income+"','"+education+"','"+ocupation+"'," +
                             "'"+pan+"','"+adhar+"','"+seniorcitizen+"')";
                     com.s.executeUpdate(querytwo);
+                    setVisible(false);
+                new SignupThree(formno).setVisible(true);
                 }
             catch (Exception e){
 //                e.printStackTrace();
