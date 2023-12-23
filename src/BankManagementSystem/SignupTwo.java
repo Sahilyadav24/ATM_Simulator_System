@@ -166,12 +166,10 @@ import java.awt.event.ActionListener;
                 seniorcitizen = "NO";
             }
 
-
             String pan = pantext.getText();
             String adhar = adhartext.getText();
 
             try {
-
                     connectJDBC com = new connectJDBC();
                     String querytwo = "insert into signupTwo values ('"+religion+"','"+Category+"','"+income+"','"+education+"','"+ocupation+"'," +
                             "'"+pan+"','"+adhar+"','"+seniorcitizen+"')";
@@ -180,7 +178,6 @@ import java.awt.event.ActionListener;
                 new SignupThree(formno).setVisible(true);
                 }
             catch (Exception e){
-//                e.printStackTrace();
                 System.out.println(e);
             }
         }
