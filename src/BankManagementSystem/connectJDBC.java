@@ -2,7 +2,7 @@ package BankManagementSystem;
 import java.sql.*;
 
 public class connectJDBC {
-    //steps to follow
+    //      steps to follow
     //1. register the driver
     //2. create connection
     //3. create statement

@@ -6,7 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class transactions extends JFrame implements ActionListener {
-    JButton withdrawal,fastcash,ministatement,pinchange,deposit,balanceenquary,exit ;
+    JButton withdrawal,fastcash,ministatement,pinchange,deposit,balanceenquary,exit;
     String pinnumber;
     transactions(String pinnumber){
         this.pinnumber=pinnumber;
@@ -70,6 +70,14 @@ public void actionPerformed(ActionEvent ae){
         }else if (ae.getSource()==deposit){
             setVisible(false);
             new Deposit(pinnumber).setVisible(true);
+        }
+        else if (ae.getSource()==fastcash){
+            setVisible(false);
+            new FastCash(pinnumber).setVisible(true);
+        }
+        else if (ae.getSource()==pinchange){
+            setVisible(false);
+            new pinchange(pinnumber).setVisible(true);
         }
 }
     public static void main(String[] args) {

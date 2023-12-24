@@ -34,27 +34,27 @@ public class SignupThree extends JFrame implements ActionListener {
 
 
         r1 = new JRadioButton("Saving Account");
-        r1.setFont(new Font("Raleway",Font.LAYOUT_LEFT_TO_RIGHT,16));
+        r1.setFont(new Font("Raleway",Font.BOLD,16));
         r1.setBackground(Color.white);
         r1.setBounds(100,180,150,20);
         add(r1);
 
         r2 = new JRadioButton("Current Account");
-        r2.setFont(new Font("Raleway",Font.LAYOUT_LEFT_TO_RIGHT,16));
+        r2.setFont(new Font("Raleway",Font.BOLD,16));
         r2.setBackground(Color.white);
-        r2.setBounds(350,180,150,20);
+        r2.setBounds(350,180,170,20);
         add(r2);
 
         r3 = new JRadioButton("Fixed Account");
-        r3.setFont(new Font("Raleway",Font.LAYOUT_LEFT_TO_RIGHT,16));
+        r3.setFont(new Font("Raleway",Font.BOLD,16));
         r3.setBackground(Color.white);
         r3.setBounds(100,220,150,20);
         add(r3);
 
         r4 = new JRadioButton("Recurring Account");
-        r4.setFont(new Font("Raleway",Font.LAYOUT_LEFT_TO_RIGHT,16));
+        r4.setFont(new Font("Raleway",Font.BOLD,16));
         r4.setBackground(Color.white);
-        r4.setBounds(350,220,160,20);
+        r4.setBounds(350,220,180,20);
         add(r4);
 
         ButtonGroup buttonsel = new ButtonGroup();
