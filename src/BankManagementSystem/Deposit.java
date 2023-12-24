@@ -21,7 +21,7 @@ public class Deposit extends JFrame implements ActionListener {
         imagee.setBounds(0, 0, 900, 900);
         add(imagee);
 
-        JLabel text = new JLabel("Enter the Amount you want to BankManagementSystem.Deposit");
+        JLabel text = new JLabel("Enter the Amount you want to Deposit");
         text.setBounds(170,300,400,20);
         text.setForeground(Color.WHITE);
         text.setFont(new Font("System",Font.BOLD,16));
@@ -62,9 +62,10 @@ public class Deposit extends JFrame implements ActionListener {
             }
             else {
                 connectJDBC com = new connectJDBC();
-                String quary = "Insert into bank values('"+pinnumber+"','"+date+"','"+deposit+"','"+number+"')";
+                String query = "Insert into bank values('"+pinnumber+"','"+date+"','Deposit','"+number+"')";
+
                 try {
-                    com.s.executeUpdate(quary);
+                    com.s.executeUpdate(query);
                     JOptionPane.showMessageDialog(null,"Rs"+number+"Deposited Successfully");
                     setVisible(false);
                     new transactions(pinnumber).setVisible(true);

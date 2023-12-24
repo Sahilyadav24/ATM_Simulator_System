@@ -81,6 +81,9 @@ public void actionPerformed(ActionEvent ae){
         }else if (ae.getSource()==balanceenquary){
             setVisible(false);
             new BalanceEnquiry(pinnumber).setVisible(true);
+        }else if (ae.getSource()==ministatement){
+            setVisible(false);
+            new MiniStatement(pinnumber).setVisible(true);
         }
 }
     public static void main(String[] args) {
