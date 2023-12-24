@@ -75,9 +75,12 @@ public void actionPerformed(ActionEvent ae){
             setVisible(false);
             new FastCash(pinnumber).setVisible(true);
         }
-        else if (ae.getSource()==pinchange){
+        else if (ae.getSource()==pinchange) {
             setVisible(false);
             new pinchange(pinnumber).setVisible(true);
+        }else if (ae.getSource()==balanceenquary){
+            setVisible(false);
+            new BalanceEnquiry(pinnumber).setVisible(true);
         }
 }
     public static void main(String[] args) {
