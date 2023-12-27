@@ -1,4 +1,4 @@
-package BankManagementSystem;
+package ATM_Simulator_System;
 
 import javax.swing.*;
 import java.awt.*;
@@ -57,7 +57,7 @@ public class Deposit extends JFrame implements ActionListener {
         if (ae.getSource()==deposit){
             String number = amount.getText();
             Date date = new Date();
-            if (number.equals("")){
+            if (number.equals(" ")){
                 JOptionPane.showMessageDialog(null,"Please enter the Amount you want to Deposit");
             }
             else {

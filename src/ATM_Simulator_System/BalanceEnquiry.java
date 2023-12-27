@@ -1,10 +1,11 @@
-package BankManagementSystem;
+package ATM_Simulator_System;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class BalanceEnquiry extends JFrame implements ActionListener {
     String pinnumber;
@@ -44,6 +45,15 @@ public class BalanceEnquiry extends JFrame implements ActionListener {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        finally {
+            if (con != null && con.s != null) {
+                try {
+                    con.s.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
 
         JLabel text = new JLabel("Your current account balance is = " + balance);

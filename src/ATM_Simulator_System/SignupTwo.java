@@ -1,11 +1,12 @@
-package BankManagementSystem;
+package ATM_Simulator_System;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
-    public class SignupTwo extends JFrame implements ActionListener {
+public class SignupTwo extends JFrame implements ActionListener {
 
         JTextField  pantext,adhartext;
         JRadioButton yes,no;
@@ -169,8 +170,10 @@ import java.awt.event.ActionListener;
             String pan = pantext.getText();
             String adhar = adhartext.getText();
 
+
+            connectJDBC com = new connectJDBC();
             try {
-                    connectJDBC com = new connectJDBC();
+
                     String querytwo = "insert into signupTwo values ('"+religion+"','"+Category+"','"+income+"','"+education+"','"+ocupation+"'," +
                             "'"+pan+"','"+adhar+"','"+seniorcitizen+"')";
                     com.s.executeUpdate(querytwo);
@@ -179,7 +182,16 @@ import java.awt.event.ActionListener;
                 }
             catch (Exception e){
                 System.out.println(e);
+            }finally {
+                if (com != null && com.s != null) {
+                    try {
+                        com.s.close();
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
             }
+
         }
         public static void main(String[] args) {
             new SignupTwo(" ");

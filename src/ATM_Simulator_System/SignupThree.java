@@ -1,4 +1,4 @@
-package BankManagementSystem;
+package ATM_Simulator_System;
 
 import javax.swing.*;
 import java.awt.*;

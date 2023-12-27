@@ -1,9 +1,10 @@
-package BankManagementSystem;
+package ATM_Simulator_System;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.util.Random;
 import com.toedter.calendar.JDateChooser;
 
@@ -203,13 +204,13 @@ public class SignupOne extends JFrame implements ActionListener {
         String state = statetext.getText();
         String pin = pintext.getText();
 
-
+        connectJDBC con = new connectJDBC();
         try {
             if (name.equals("")){
                 JOptionPane.showMessageDialog(null,"Name is Required");
             }
             else {
-                connectJDBC con = new connectJDBC();
+
                 String quary = "insert into signup values ('"+formno+"','"+name+"','"+fname+"','"+dob+"','"+gender+"','"+email+"','"+address+"','"+pin+"','"+state+"','"+mariatl+"')";
                 con.s.executeUpdate(quary);
 
@@ -218,7 +219,16 @@ public class SignupOne extends JFrame implements ActionListener {
             }
         }catch (Exception e){
             System.out.println(e);
+        }finally {
+            if (con != null && con.s != null) {
+                try {
+                    con.s.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
+
     }
     public static void main(String[] args) {
         new SignupOne();

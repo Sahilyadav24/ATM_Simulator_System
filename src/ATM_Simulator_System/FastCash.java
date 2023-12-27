@@ -1,4 +1,4 @@
-package BankManagementSystem;
+package ATM_Simulator_System;
 
 import javax.swing.*;
 import java.awt.*;
@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Date;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class FastCash extends JFrame implements ActionListener {
     JButton withdrawal, fastcash, ministatement, pinchange, deposit, balanceenquiry, exit;
@@ -37,22 +38,22 @@ public class FastCash extends JFrame implements ActionListener {
         fastcash.addActionListener(this);
         image.add(fastcash);
 
-        ministatement = new JButton("Rs 1,000");
+        ministatement = new JButton("Rs 1000");
         ministatement.setBounds(170, 450, 150, 30);
         ministatement.addActionListener(this);
         image.add(ministatement);
 
-        pinchange = new JButton("Rs 2,000");
+        pinchange = new JButton("Rs 2000");
         pinchange.setBounds(170, 415, 150, 30);
         pinchange.addActionListener(this);
         image.add(pinchange);
 
-        deposit = new JButton("Rs 5,000");
+        deposit = new JButton("Rs 5000");
         deposit.setBounds(355, 485, 150, 30);
         deposit.addActionListener(this);
         image.add(deposit);
 
-        balanceenquiry = new JButton("Rs 10,000");
+        balanceenquiry = new JButton("Rs 10000");
         balanceenquiry.setBounds(170, 485, 150, 30);
         balanceenquiry.addActionListener(this);
         image.add(balanceenquiry);
@@ -100,7 +101,16 @@ public class FastCash extends JFrame implements ActionListener {
                 new transactions(pinnumber).setVisible(true);
             } catch (Exception e) {
                 e.printStackTrace();
+            }finally {
+                if (con != null && con.s != null) {
+                    try {
+                        con.s.close();
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
             }
+
         }
     }
 

@@ -1,9 +1,10 @@
-package BankManagementSystem;
+package ATM_Simulator_System;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 public class pinchange extends JFrame implements ActionListener {
     JPasswordField pin, repin;
@@ -97,14 +98,27 @@ public class pinchange extends JFrame implements ActionListener {
                 String quary2 = "update login set pinnumber = '" + rpin + "' Where pinnumber='" + pinnumber + "'";
                 String quary3 = "update signupthree set pinnumber = '" + rpin + "' Where pinnumber='" + pinnumber + "'";
 
-                con.s.executeUpdate(quary1);
-                con.s.executeUpdate(quary2);
-                con.s.executeUpdate(quary3);
-                JOptionPane.showMessageDialog(null, "pin changed successfully");
+                try {
+                    con.s.executeUpdate(quary1);
+                    con.s.executeUpdate(quary2);
+                    con.s.executeUpdate(quary3);
+                    JOptionPane.showMessageDialog(null, "pin changed successfully");
 
-                setVisible(false);
-                new transactions(rpin).setVisible(true);
-
+                    setVisible(false);
+                    new transactions(rpin).setVisible(true);
+                } catch (SQLException sqlException) {
+                    JOptionPane.showMessageDialog(null, "Error updating pin: " + sqlException.getMessage());
+                    sqlException.printStackTrace();
+                } finally {
+                    // Close the connection in the 'finally' block
+                    if (con != null && con.s != null) {
+                        try {
+                            con.s.close();
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
 
             } catch (Exception e) {
                 System.out.println(e);

@@ -1,9 +1,10 @@
-package BankManagementSystem;
+package ATM_Simulator_System;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class Login extends JFrame implements ActionListener {
     JButton singup,clear,singin;
@@ -97,7 +98,16 @@ public class Login extends JFrame implements ActionListener {
                 }
             }catch (Exception e){
                 System.out.println(e);
+            }finally {
+                if (con != null && con.s != null) {
+                    try {
+                        con.s.close();
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
             }
+
         }
         else if (ae.getSource()==singup){
             setVisible(false);
