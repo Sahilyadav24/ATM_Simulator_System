@@ -5,23 +5,25 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Random;
 import com.toedter.calendar.JDateChooser;
 
 
-        //C:\Users\ASUS\AppData\Roaming\JetBrains\IdeaIC2023.2
 public class SignupOne extends JFrame implements ActionListener {
 
     int random;
-    JTextField nametext,fnametext, emailtext, pintext,statetext,addresstext;
-    JRadioButton male, female,married,unmarried;
+    JTextField nametext, fnametext, emailtext, pintext, statetext, addresstext;
+    JRadioButton male, female, married, unmarried;
     JButton next;
     JDateChooser datechoose;
 
 
-    SignupOne(){
-        setLayout(null);
 
+    SignupOne(){
+
+        setLayout(null);
         int min = 1000;
         int max = 9999;
         Random ran = new Random();
@@ -32,14 +34,10 @@ public class SignupOne extends JFrame implements ActionListener {
         formno.setBounds(140,20,600,40);
         add(formno);
 
-
-
         JLabel personalDetails = new JLabel("Page 1 : Personal Details");
         personalDetails.setFont(new Font("Raleway",Font.LAYOUT_LEFT_TO_RIGHT,18));
         personalDetails.setBounds(290,80,400,30);
         add(personalDetails);
-
-
 
         JLabel name = new JLabel("Name :");
         name.setFont(new Font("Raleway",Font.LAYOUT_LEFT_TO_RIGHT,20));
@@ -50,7 +48,6 @@ public class SignupOne extends JFrame implements ActionListener {
         nametext.setBounds(350,140,250,30);
         nametext.setFont(new Font("Arial",Font.BOLD,15));
         add(nametext);
-
 
 
         JLabel fname = new JLabel("Father Name :");
@@ -64,7 +61,6 @@ public class SignupOne extends JFrame implements ActionListener {
         add(fnametext);
 
 
-
         JLabel dob = new JLabel("D.O.B :");
         dob.setFont(new Font("Raleway",Font.LAYOUT_LEFT_TO_RIGHT,20));
         dob.setBounds(100,240,150,30);
@@ -74,8 +70,6 @@ public class SignupOne extends JFrame implements ActionListener {
         datechoose.setBounds(350,240,250,30);
         datechoose.setForeground(new Color(105,105,105));
         add(datechoose);
-
-
 
         JLabel gender = new JLabel("Gender :");
         gender.setFont(new Font("Raleway",Font.LAYOUT_LEFT_TO_RIGHT,20));
@@ -97,7 +91,6 @@ public class SignupOne extends JFrame implements ActionListener {
         buttonselect.add(female);
 
 
-
         JLabel email = new JLabel("E-Mail :");
         email.setFont(new Font("Raleway",Font.LAYOUT_LEFT_TO_RIGHT,20));
         email.setBounds(100,340,150,30);
@@ -107,8 +100,6 @@ public class SignupOne extends JFrame implements ActionListener {
         emailtext.setBounds(350,340,250,30);
         emailtext.setFont(new Font("Arial",Font.BOLD,15));
         add(emailtext);
-
-
 
         JLabel marital = new JLabel("Marital Status :");
         marital.setFont(new Font("Raleway",Font.LAYOUT_LEFT_TO_RIGHT,20));
@@ -129,8 +120,6 @@ public class SignupOne extends JFrame implements ActionListener {
         maritalselect.add(married);
         maritalselect.add(unmarried);
 
-
-
         JLabel address = new JLabel("Address :");
         address.setFont(new Font("Raleway",Font.LAYOUT_LEFT_TO_RIGHT,20));
         address.setBounds(100,440,150,30);
@@ -140,7 +129,6 @@ public class SignupOne extends JFrame implements ActionListener {
         addresstext.setBounds(350,440,250,30);
         addresstext.setFont(new Font("Arial",Font.BOLD,15));
         add(addresstext);
-
 
 
         JLabel state = new JLabel("State :");
@@ -153,8 +141,6 @@ public class SignupOne extends JFrame implements ActionListener {
         statetext.setFont(new Font("Arial",Font.BOLD,15));
         add(statetext);
 
-
-
         JLabel pin = new JLabel("Pin Code :");
         pin.setFont(new Font("Raleway",Font.LAYOUT_LEFT_TO_RIGHT,20));
         pin.setBounds(100,540,150,30);
@@ -166,7 +152,6 @@ public class SignupOne extends JFrame implements ActionListener {
         add(pintext);
 
 
-
         next = new JButton("NEXT");
         next.setBackground(Color.RED);
         next.setForeground(Color.black);
@@ -175,7 +160,7 @@ public class SignupOne extends JFrame implements ActionListener {
         next.addActionListener(this);
         add(next);
 
-        getContentPane().setBackground(Color.cyan);//for background colour , it is in AWT package
+        getContentPane().setBackground(Color.cyan);//for background colour, it is in AWT package
 
         setSize(800,700);
         setVisible(true);
@@ -183,9 +168,11 @@ public class SignupOne extends JFrame implements ActionListener {
     }
     public void actionPerformed(ActionEvent ae){
         String formno = "" + random;
+//        String formno = String.valueOf(random);
         String name = nametext.getText();
         String fname = fnametext.getText();
-        String dob = ((JTextField) datechoose.getDateEditor().getUiComponent()).getText();
+        Date dobDate = datechoose.getDate();
+
         String gender = null;
         if (male.isSelected()){
             gender = "male";
@@ -204,13 +191,16 @@ public class SignupOne extends JFrame implements ActionListener {
         String state = statetext.getText();
         String pin = pintext.getText();
 
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String dob = sdf.format(dobDate);
+
         connectJDBC con = new connectJDBC();
         try {
             if (name.equals("")){
                 JOptionPane.showMessageDialog(null,"Name is Required");
             }
             else {
-
                 String quary = "insert into signup values ('"+formno+"','"+name+"','"+fname+"','"+dob+"','"+gender+"','"+email+"','"+address+"','"+pin+"','"+state+"','"+mariatl+"')";
                 con.s.executeUpdate(quary);
 
@@ -228,9 +218,9 @@ public class SignupOne extends JFrame implements ActionListener {
                 }
             }
         }
-
     }
     public static void main(String[] args) {
+
         new SignupOne();
     }
 }

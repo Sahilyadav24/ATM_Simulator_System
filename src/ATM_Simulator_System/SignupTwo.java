@@ -19,11 +19,13 @@ public class SignupTwo extends JFrame implements ActionListener {
         SignupTwo(String formno) {
             this.formno = formno;
             setLayout(null);
+            System.out.println(formno);
 
             setTitle("New Account Application Form - Page 2");
 
 
             JLabel additionalDetails = new JLabel("Page 2 : Additional Details");
+
             additionalDetails.setFont(new Font("Raleway", Font.LAYOUT_LEFT_TO_RIGHT, 18));
             additionalDetails.setBounds(290, 80, 400, 30);
             add(additionalDetails);
@@ -83,8 +85,6 @@ public class SignupTwo extends JFrame implements ActionListener {
             edu.setFont(new Font("Arial", Font.BOLD, 15));
             edu.setBackground(Color.white);
             add(edu);
-
-
 
             JLabel occupation = new JLabel("Occupation :");
             occupation.setFont(new Font("Raleway", Font.LAYOUT_LEFT_TO_RIGHT, 20));
@@ -160,11 +160,11 @@ public class SignupTwo extends JFrame implements ActionListener {
             String income = (String) incomeee.getSelectedItem();
             String education = (String) edu.getSelectedItem();
             String ocupation = (String) ocu.getSelectedItem();
-            String seniorcitizen = null;
+            int seniorcitizen = 0;
             if (yes.isSelected()){
-                seniorcitizen = "YES";
+                seniorcitizen = 1;
             }else if (no.isSelected()){
-                seniorcitizen = "NO";
+                seniorcitizen = 0;
             }
 
             String pan = pantext.getText();
@@ -194,7 +194,8 @@ public class SignupTwo extends JFrame implements ActionListener {
 
         }
         public static void main(String[] args) {
-            new SignupTwo(" ");
+
+            new SignupTwo("").setVisible(true);
         }
     }
 

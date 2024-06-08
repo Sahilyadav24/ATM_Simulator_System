@@ -14,14 +14,20 @@ public class connectJDBC {
         try {
             String url = "jdbc:mysql://localhost:3306/bankmanagementsystem";
             String username = "root";
-            String password = "root123";
+            String password = "root";
 
             Connection c =DriverManager.getConnection(url,username,password);
             s= c.createStatement();
             System.out.println("connection successful");
 
-        }catch (Exception e){
-            System.out.println(e);
-        }
+    } catch (SQLException e) {
+        // Print the stack trace for detailed information
+        e.printStackTrace();
+        System.out.println("SQL Exception occurred: " + e.getMessage());
+    } catch (Exception e) {
+        // Print the stack trace for detailed information
+        e.printStackTrace();
+        System.out.println("An unexpected exception occurred: " + e.getMessage());
+    }
     }
 }

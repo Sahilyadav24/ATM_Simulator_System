@@ -8,24 +8,20 @@ import java.util.Random;
 
 public class SignupThree extends JFrame implements ActionListener {
     JRadioButton r1,r2,r3,r4;
-    JLabel additionalDetails, accounttype,cardno,no,info,pin,pno,pininfo,service;
+    JLabel additionalDetails, accounttype, cardno, no, info, pin, pno, pininfo, service;
     JCheckBox c1,c2,c3,c4,c5,c6,c7;
     JButton submit, cancel;
     String formno;
     SignupThree(String formno){
         this.formno = formno;
-
         setLayout(null);
 
         setTitle("New Account Application Form - Page 3");
-
 
         additionalDetails = new JLabel("Page 3 : Account Details");
         additionalDetails.setFont(new Font("Raleway", Font.BOLD, 25));
         additionalDetails.setBounds(290, 40, 400, 30);
         add(additionalDetails);
-
-
 
         accounttype = new JLabel("Account Type");
         accounttype.setFont(new Font("Raleway", Font.BOLD, 20));
@@ -143,6 +139,7 @@ public class SignupThree extends JFrame implements ActionListener {
         submit.setBounds(420,635,100,30);
         submit.addActionListener(this);
         add(submit);
+
         cancel = new JButton("Cancel");
         cancel.setBackground(Color.BLACK);
         cancel.setForeground(Color.WHITE);
@@ -160,7 +157,7 @@ public class SignupThree extends JFrame implements ActionListener {
     }
     public void actionPerformed(ActionEvent ae){
         if (ae.getSource()==submit){
-            String accounttype=null;
+            String accounttype = null;
             if (r1.isSelected()){
                 accounttype = "Saving Account";
             }
@@ -175,6 +172,7 @@ public class SignupThree extends JFrame implements ActionListener {
             Random random = new Random();
             String cardnumber = ""+ Math.abs((random.nextLong() % 90000000L)+5040936000000000L);
             String pinnumber = "" +Math.abs((random.nextLong()%9000L)+1000L);
+
 
             String facility = "";
             if (c1.isSelected()){
@@ -191,19 +189,22 @@ public class SignupThree extends JFrame implements ActionListener {
                 facility = facility +" E-Statement";
             }
             try {
-                if (accounttype.equals("")){
+                if (formno.equals("")) {
+                JOptionPane.showMessageDialog(null, "Form number is required");
+            }
+                else if (accounttype.equals("")){
                     JOptionPane.showMessageDialog(null,"Account type is Required");
                 }
                 else {
                     connectJDBC cot = new connectJDBC();
-                    String queryone = "insert into signupthree values ('"+formno+"','"+accounttype+"','"+cardnumber+"','"+pinnumber+"','"+facility+"')";
-                    String querytwo = "insert into Login values ('"+formno+"','"+cardnumber+"','"+pinnumber+"')";
+//                    String queryone = "insert into signupthree values ('"+formno+"','"+accounttype+"','"+cardnumber+"','"+pinnumber+"','"+facility+"')";
+                    String queryone = "INSERT INTO signupthree (formno, accounttype, cardnumber, pinnumber, facility) VALUES ('" + formno + "','" + accounttype + "','" + cardnumber + "','" + pinnumber + "','" + facility + "')";
+
+                    String querytwo = "insert into Login values ('"+formno+"','"+pinnumber+"','"+cardnumber+"')";
 
                     cot.s.executeUpdate(queryone);
                     cot.s.executeUpdate(querytwo);
 
-                    //signup3 object
-                    new SignupThree(formno);
                     setVisible(false);
                     JOptionPane.showMessageDialog(null, "Card Number: " + cardnumber + "\nPin: " + pinnumber);
                 }
@@ -217,6 +218,7 @@ public class SignupThree extends JFrame implements ActionListener {
     }
 
     public static void main(String[] args) {
+
         new SignupThree("");
     }
 }

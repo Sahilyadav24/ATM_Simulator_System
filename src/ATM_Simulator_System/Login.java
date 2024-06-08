@@ -86,9 +86,10 @@ public class Login extends JFrame implements ActionListener {
             connectJDBC con = new connectJDBC();
             String cardnumber = cardText.getText();
             String pinnumber = pinText.getText();
-            String quary = "select * from login where cardnumber ='"+cardnumber+"'and '"+pinnumber+"'";
+            String query = "SELECT * FROM login WHERE cardnumber ='" + cardnumber + "' AND pinnumber ='" + pinnumber + "'";
+
             try {
-                ResultSet rs = con.s.executeQuery(quary);
+                ResultSet rs = con.s.executeQuery(query);
                 if (rs.next()){
                     setVisible(false);
                     new transactions(pinnumber).setVisible(true);
@@ -107,7 +108,6 @@ public class Login extends JFrame implements ActionListener {
                     }
                 }
             }
-
         }
         else if (ae.getSource()==singup){
             setVisible(false);
