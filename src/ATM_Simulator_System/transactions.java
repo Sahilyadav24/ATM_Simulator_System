@@ -6,7 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class transactions extends JFrame implements ActionListener {
-    JButton withdrawal,fastcash,ministatement,pinchange,deposit,balanceenquary,exit;
+    JButton fastcash,ministatement,pinchange,deposit,balanceenquary,exit;
     String pinnumber;
     transactions(String pinnumber){
         this.pinnumber=pinnumber;
@@ -24,13 +24,10 @@ public class transactions extends JFrame implements ActionListener {
         text.setFont(new Font("System",Font.BOLD,16));
         image.add(text);
 
-        withdrawal = new JButton("Cash Withdraw");
-        withdrawal.setBounds(355,415,150,30);
-        withdrawal.addActionListener(this);
-        image.add(withdrawal);
 
-        fastcash = new JButton("Fast Cash");
-        fastcash.setBounds(355,450,150,30);
+
+        fastcash = new JButton("Cash Withdraw");
+        fastcash.setBounds(355,415,150,30);
         fastcash.addActionListener(this);
         image.add(fastcash);
 
@@ -45,7 +42,7 @@ public class transactions extends JFrame implements ActionListener {
         image.add(pinchange);
 
         deposit = new JButton("Deposit");
-        deposit.setBounds(355,485,150,30);
+        deposit.setBounds(355,450,150,30);
         deposit.addActionListener(this);
         image.add(deposit);
 
@@ -55,7 +52,7 @@ public class transactions extends JFrame implements ActionListener {
         image.add(balanceenquary);
 
         exit = new JButton("EXIT");
-        exit.setBounds(355,520,150,30);
+        exit.setBounds(355,485,150,30);
         exit.addActionListener(this);
         image.add(exit);
 
