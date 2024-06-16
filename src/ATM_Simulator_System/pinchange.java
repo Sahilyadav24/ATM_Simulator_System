@@ -123,6 +123,10 @@ public class pinchange extends JFrame implements ActionListener {
             } catch (Exception e) {
                 System.out.println(e);
             }
+        } else if (ae.getSource() == back) {
+            // Handle back button action
+            setVisible(false);
+            new transactions(pinnumber).setVisible(true);
         }
     }
 }
