@@ -6,6 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.Random;
 import com.toedter.calendar.JDateChooser;
@@ -171,7 +174,28 @@ public class SignupOne extends JFrame implements ActionListener {
 //        String formno = String.valueOf(random);
         String name = nametext.getText();
         String fname = fnametext.getText();
+
+        // Assuming 'datechoose.getDate()' returns a java.util.Date
         Date dobDate = datechoose.getDate();
+
+        // Format the java.util.Date to a string using SimpleDateFormat
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String dob = sdf.format(dobDate);
+        System.out.println(dob);
+
+        try {
+            LocalDate selectedDate = LocalDate.parse(dob, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            LocalDate currentDate = LocalDate.now();
+
+            if (selectedDate.isAfter(currentDate)) {
+                System.out.println("The selected date cannot be later than the current date.");
+            } else {
+                System.out.println("The selected date is valid.");
+            }
+        } catch (DateTimeParseException e) {
+            System.out.println("Invalid date format.");
+        }
+
 
         String gender = null;
         if (male.isSelected()){
@@ -190,10 +214,6 @@ public class SignupOne extends JFrame implements ActionListener {
         String address = addresstext.getText();
         String state = statetext.getText();
         String pin = pintext.getText();
-
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String dob = sdf.format(dobDate);
 
         connectJDBC con = new connectJDBC();
         try {
