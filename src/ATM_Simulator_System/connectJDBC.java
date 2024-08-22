@@ -1,41 +1,3 @@
-//package ATM_Simulator_System;
-//import java.sql.*;
-//
-//public class connectJDBC {
-//    //      steps to follow
-//    //1. register the driver
-//    //2. create connection
-//    //3. create statement
-//    //4. Execute Quarry
-//    //5. close connecetion
-//
-//    public  Statement s;
-//    public connectJDBC(){//connection is created here
-//        try {
-//            String url = "jdbc:mysql://localhost:3306/bankmanagementsystem";
-//            String username = "root";
-//            String password = "root";
-//
-//            Connection c =DriverManager.getConnection(url,username,password);
-//            s= c.createStatement();
-//            System.out.println("connection successful");
-//
-//    } catch (SQLException e) {
-//        // Print the stack trace for detailed information
-//        e.printStackTrace();
-//        System.out.println("SQL Exception occurred: " + e.getMessage());
-//    } catch (Exception e) {
-//        // Print the stack trace for detailed information
-//        e.printStackTrace();
-//        System.out.println("An unexpected exception occurred: " + e.getMessage());
-//    }
-//
-//    }
-//
-//    public Connection getConnection() {
-//        return c;
-//    }
-//}
 package ATM_Simulator_System;
 
 import java.sql.Connection;
@@ -44,10 +6,18 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class connectJDBC {
-    public Statement s;
-    private Connection c;
 
-    public connectJDBC() { // connection is created here
+    private static connectJDBC instance;
+    private Connection c;
+    public Statement s;
+
+    // Private constructor to prevent instantiation from outside
+    private connectJDBC() {
+        createConnection();
+    }
+
+    // Method to create a connection
+    private void createConnection() {
         try {
             String url = "jdbc:mysql://localhost:3306/bankmanagementsystem";
             String username = "root";
@@ -65,8 +35,41 @@ public class connectJDBC {
         }
     }
 
+    // Public static method to provide access to the single instance
+    public static connectJDBC getInstance() {
+        if (instance == null) {
+            synchronized (connectJDBC.class) {
+                if (instance == null) {
+                    instance = new connectJDBC();
+                }
+            }
+        }
+        return instance;
+    }
+
+    // Method to get the connection
     public Connection getConnection() {
+        try {
+            if (c == null || c.isClosed()) {
+                createConnection();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("SQL Exception occurred: " + e.getMessage());
+        }
         return c;
     }
-}
 
+    // Optional: Method to close the connection
+    public void closeConnection() {
+        try {
+            if (c != null && !c.isClosed()) {
+                c.close();
+                System.out.println("Connection closed");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("SQL Exception occurred: " + e.getMessage());
+        }
+    }
+}

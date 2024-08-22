@@ -83,7 +83,7 @@ public class Login extends JFrame implements ActionListener {
             pinText.setText("");
         }
         else if (ae.getSource()==singin){
-            connectJDBC con = new connectJDBC();
+            connectJDBC con = connectJDBC.getInstance();
             String cardnumber = cardText.getText();
             String pinnumber = pinText.getText();
             String query = "SELECT * FROM login WHERE cardnumber ='" + cardnumber + "' AND pinnumber ='" + pinnumber + "'";
@@ -115,6 +115,7 @@ public class Login extends JFrame implements ActionListener {
         }
     }
     public static void main(String[] args) {
+
         new Login();
     }
 }

@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class pinchange extends JFrame implements ActionListener {
@@ -93,20 +95,34 @@ public class pinchange extends JFrame implements ActionListener {
                     return;
                 }
 
-                connectJDBC con = new connectJDBC();
-                String quary1 = "update bank set pinnumber = '" + rpin + "' Where pinnumber='" + pinnumber + "'";
-                String quary2 = "update login set pinnumber = '" + rpin + "' Where pinnumber='" + pinnumber + "'";
-                String quary3 = "update signupthree set pinnumber = '" + rpin + "' Where pinnumber='" + pinnumber + "'";
+                connectJDBC con = connectJDBC.getInstance();
 
-                try {
-                    con.s.executeUpdate(quary1);
-                    con.s.executeUpdate(quary2);
-                    con.s.executeUpdate(quary3);
-                    JOptionPane.showMessageDialog(null, "pin changed successfully");
+                String query1 = "UPDATE bank SET pinnumber = ? WHERE pinnumber = ?";
+                String query2 = "UPDATE login SET pinnumber = ? WHERE pinnumber = ?";
+                String query3 = "UPDATE signupthree SET pinnumber = ? WHERE pinnumber = ?";
 
+                try (Connection conn = con.getConnection();
+                     PreparedStatement pstmt1 = conn.prepareStatement(query1);
+                     PreparedStatement pstmt2 = conn.prepareStatement(query2);
+                     PreparedStatement pstmt3 = conn.prepareStatement(query3)) {
+
+                    pstmt1.setString(1, rpin);
+                    pstmt1.setString(2, pinnumber);
+                    pstmt2.setString(1, rpin);
+                    pstmt2.setString(2, pinnumber);
+                    pstmt3.setString(1, rpin);
+                    pstmt3.setString(2, pinnumber);
+
+                    pstmt1.executeUpdate();
+                    pstmt2.executeUpdate();
+                    pstmt3.executeUpdate();
+
+                    JOptionPane.showMessageDialog(null, "PIN changed successfully.");
                     setVisible(false);
                     new transactions(rpin).setVisible(true);
-                } catch (SQLException sqlException) {
+
+                }
+                catch (SQLException sqlException) {
                     JOptionPane.showMessageDialog(null, "Error updating pin: " + sqlException.getMessage());
                     sqlException.printStackTrace();
                 } finally {

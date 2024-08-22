@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class FastCash extends JFrame implements ActionListener {
     JButton withdrawal, fastcash, ministatement, pinchange, deposit, balanceenquiry, exit;
@@ -75,9 +76,10 @@ public class FastCash extends JFrame implements ActionListener {
             new transactions(pinnumber).setVisible(true);
         } else {
             String amount = ((JButton) ae.getSource()).getText().substring(3);
-            connectJDBC con = new connectJDBC();
-            try {
-                ResultSet rs = con.s.executeQuery("select * from bank where pinnumber ='" + pinnumber + "'");
+//            connectJDBC con = new connectJDBC();
+            connectJDBC con = connectJDBC.getInstance();
+            try (Statement stmt = con.getConnection().createStatement()) {
+                ResultSet rs = stmt.executeQuery("SELECT * FROM bank WHERE pinnumber ='" + pinnumber + "'");
                 int balance = 0;
                 while (rs.next()) {
                     if (rs.getString("type").equals("Deposit")) {
@@ -87,30 +89,21 @@ public class FastCash extends JFrame implements ActionListener {
                     }
                 }
 
-                if (ae.getSource() != exit && balance < Integer.parseInt(amount)) {
+                if (balance < Integer.parseInt(amount)) {
                     JOptionPane.showMessageDialog(null, "Insufficient Balance");
                     return;
                 }
 
                 Date date = new Date(System.currentTimeMillis());
                 String query = "INSERT INTO bank (pinnumber, date, type, amount) VALUES('" + pinnumber + "','" + date + "','Withdrawal','" + amount + "')";
+                stmt.executeUpdate(query);
 
-                con.s.executeUpdate(query);
-                JOptionPane.showMessageDialog(null, "Rs" + amount + " Debited Successfully");
+                JOptionPane.showMessageDialog(null, "Rs " + amount + " Debited Successfully");
                 setVisible(false);
                 new transactions(pinnumber).setVisible(true);
-            } catch (Exception e) {
+            } catch (SQLException e) {
                 e.printStackTrace();
-            }finally {
-                if (con != null && con.s != null) {
-                    try {
-                        con.s.close();
-                    } catch (SQLException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
             }
-
         }
     }
 

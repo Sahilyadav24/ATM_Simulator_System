@@ -1,19 +1,22 @@
 package ATM_Simulator_System;
 
+import com.google.gson.JsonObject;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.SQLException;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class SignupTwo extends JFrame implements ActionListener {
 
         JTextField  pantext,adhartext;
         JRadioButton yes,no;
-        JButton next;
+        JButton next, back;
         String formno;
 
-        JComboBox relegionn, valcategory, incomeee, edu, ocu;
+        JComboBox<String> relegionn, valcategory, incomeee, edu, ocu;
 
 
         SignupTwo(String formno) {
@@ -148,55 +151,67 @@ public class SignupTwo extends JFrame implements ActionListener {
             next.addActionListener(this);
             add(next);
 
+
+            back = new JButton("BACK");
+            back.setBackground(Color.RED);
+            back.setForeground(Color.black);
+            back.setFont(new Font("Raleway", Font.BOLD, 16));
+            back.setBounds(420, 590, 80, 30);
+            back.addActionListener(this);
+            add(back);
+
             getContentPane().setBackground(Color.cyan);//for background colour , it is in AWT package
 
             setSize(800, 700);
             setVisible(true);
             setLocation(350, 50);
         }
-        public void actionPerformed(ActionEvent ae){
+    public void actionPerformed(ActionEvent ae) {
+        if (ae.getSource() == next) {
+            // Handle Next Button
             String religion = (String) relegionn.getSelectedItem();
-            String Category = (String) valcategory.getSelectedItem();
+            String category = (String) valcategory.getSelectedItem();
             String income = (String) incomeee.getSelectedItem();
             String education = (String) edu.getSelectedItem();
-            String ocupation = (String) ocu.getSelectedItem();
-            int seniorcitizen = 0;
-            if (yes.isSelected()){
-                seniorcitizen = 1;
-            }else if (no.isSelected()){
-                seniorcitizen = 0;
-            }
-
+            String occupation = (String) ocu.getSelectedItem();
+            int seniorcitizen = yes.isSelected() ? 1 : 0;
             String pan = pantext.getText();
             String adhar = adhartext.getText();
 
+            // Store data to local storage
+            storeDataLocally(formno, religion, category, income, education, occupation, pan, adhar, seniorcitizen);
 
-            connectJDBC com = new connectJDBC();
-            try {
-
-                    String querytwo = "insert into signupTwo values ('"+religion+"','"+Category+"','"+income+"','"+education+"','"+ocupation+"'," +
-                            "'"+pan+"','"+adhar+"','"+seniorcitizen+"')";
-                    com.s.executeUpdate(querytwo);
-                    setVisible(false);
+            setVisible(false);
                 new SignupThree(formno).setVisible(true);
-                }
-            catch (Exception e){
-                System.out.println(e);
-            }finally {
-                if (com != null && com.s != null) {
-                    try {
-                        com.s.close();
-                    } catch (SQLException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
-
+        } else if (ae.getSource() == back) {
+            // Handle Back Button
+            setVisible(false);
+            new SignupOne().setVisible(true);
         }
-        public static void main(String[] args) {
+    }
+
+    private void storeDataLocally(String formno, String religion, String category, String income, String education, String occupation, String pan, String adhar, int seniorcitizen) {
+        JsonObject userData = new JsonObject();
+        userData.addProperty("formno", formno);
+        userData.addProperty("religion", religion);
+        userData.addProperty("category", category);
+        userData.addProperty("income", income);
+        userData.addProperty("education", education);
+        userData.addProperty("occupation", occupation);
+        userData.addProperty("pan", pan);
+        userData.addProperty("adhar", adhar);
+        userData.addProperty("seniorcitizen", seniorcitizen == 1 ? "Yes" : "No");
+
+        // Save the data to local storage
+        try (FileWriter fileWriter = new FileWriter("SignupTwo.json")) {
+            fileWriter.write(userData.toString());
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Error saving data: " + e.getMessage());
+        }
+    }
+
+    public static void main(String[] args) {
 
             new SignupTwo("").setVisible(true);
         }
     }
-
-

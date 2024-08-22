@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -30,20 +32,27 @@ public class BalanceEnquiry extends JFrame implements ActionListener {
         back.addActionListener(this);
         image.add(back); // Add the back button to the image, not the frame
 
-        connectJDBC con = new connectJDBC();
+        connectJDBC con = connectJDBC.getInstance();
+
         int balance = 0;
 
-        try {
-            ResultSet rs = con.s.executeQuery("select * from bank where pinnumber = '" + pinnumber + "'");
+        try (Connection conn = con.getConnection();
+             PreparedStatement ps = conn.prepareStatement("SELECT type, amount FROM bank WHERE pinnumber = ?")) {
 
-            while (rs.next()) {
-                if (rs.getString("type").equals("Deposit")) {
-                    balance += Integer.parseInt(rs.getString("amount")); // Assuming the column name is "amount"
-                } else {
-                    balance -= Integer.parseInt(rs.getString("amount"));
+            ps.setString(1, pinnumber);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    if (rs.getString("type").equals("Deposit")) {
+                        balance += Integer.parseInt(rs.getString("amount")); // Assuming the column name is "amount"
+                    } else {
+                        balance -= Integer.parseInt(rs.getString("amount"));
+                    }
                 }
             }
-        } catch (Exception e) {
+
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
         finally {

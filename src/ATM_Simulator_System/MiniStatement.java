@@ -2,6 +2,10 @@ package ATM_Simulator_System;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -28,35 +32,70 @@ public class MiniStatement extends JFrame  {
         JLabel balancee = new JLabel();
         balancee.setBounds(20,400,300,20);
         add(balancee);
-        connectJDBC conn = new connectJDBC();
-        {
-            try {
 
-                ResultSet rs = conn.s.executeQuery("select * from login where pinnumber ='" + pinnumber + "'");
-                while (rs.next()) {
-                    card.setText("Card Number: " + rs.getString("cardnumber").substring(0, 4) + "XXXXXXXX" + rs.getString("cardnumber").substring(12));
-                }
-            } catch (Exception e) {
-                System.out.println(e);
+        // Back Button
+        JButton backButton = new JButton("Back");
+        backButton.setBounds(150, 500, 100, 30);
+        add(backButton);
+
+        // Action listener for the back button
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setVisible(false);
+                new transactions(pinnumber).setVisible(true); // Go back to transactions page
             }
-            try {
-                int totalbal = 0;
-                ResultSet rs = conn.s.executeQuery("select * from bank where pinnumber ='" + pinnumber + "'");
-                while (rs.next()) {
-                    mini.setText(mini.getText() + "<html>" + rs.getString("date") + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + rs.getString("type") + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + rs.getString("amount") + "<br><br><html>");
-                    if (rs.getString("type").equals("Deposit")) {
-                        totalbal += Integer.parseInt(rs.getString("Amount"));
-                    } else {
-                        totalbal -= Integer.parseInt(rs.getString("Amount"));
+        });
+        connectJDBC con = connectJDBC.getInstance();
+
+        {
+            try (Connection conn = con.getConnection();
+                 PreparedStatement ps = conn.prepareStatement("SELECT cardnumber FROM login WHERE pinnumber = ?")) {
+
+                ps.setString(1, pinnumber);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        card.setText("Card Number: " + rs.getString("cardnumber").substring(0, 4) + "XXXXXXXX" + rs.getString("cardnumber").substring(12));
                     }
                 }
-                balancee.setText("Your total balance is Rs =" + totalbal);
-            } catch (Exception e) {
+            } catch (SQLException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Error fetching card number: " + e.getMessage());
+            }
+
+            // Fetch transaction details
+            try (Connection conn = con.getConnection();
+                 PreparedStatement ps = conn.prepareStatement("SELECT date, type, amount FROM bank WHERE pinnumber = ?")) {
+
+                ps.setString(1, pinnumber);
+                try (ResultSet rs = ps.executeQuery()) {
+                    int totalbal = 0;
+                    StringBuilder miniStatementText = new StringBuilder("<html>");
+                    while (rs.next()) {
+                        miniStatementText.append(rs.getString("date"))
+                                .append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
+                                .append(rs.getString("type"))
+                                .append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
+                                .append(rs.getString("amount"))
+                                .append("<br><br>");
+
+                        if (rs.getString("type").equals("Deposit")) {
+                            totalbal += Integer.parseInt(rs.getString("amount"));
+                        } else {
+                            totalbal -= Integer.parseInt(rs.getString("amount"));
+                        }
+                    }
+                    miniStatementText.append("</html>");
+                    mini.setText(miniStatementText.toString());
+                    balancee.setText("Your total balance is Rs = " + totalbal);
+                }
+            }
+            catch (Exception e) {
                 System.out.println(e);
             } finally {
-                if (conn != null && conn.s != null) {
+                if (con != null && con.s != null) {
                     try {
-                        conn.s.close();
+                        con.s.close();
                     } catch (SQLException e) {
                         throw new RuntimeException(e);
                     }
