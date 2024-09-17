@@ -2,9 +2,9 @@ package ATM_Simulator_System;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.*;
 
 public class Login extends JFrame implements ActionListener {
     JButton singup,clear,singin;
@@ -77,29 +77,33 @@ public class Login extends JFrame implements ActionListener {
         setVisible(true);
         setLocation(350,200);
     }
-    public void actionPerformed(ActionEvent ae){
-        if (ae.getSource()==clear){
+    public void actionPerformed(ActionEvent ae) {
+        String cardnumber;
+        if (ae.getSource() == clear) {
             cardText.setText("");
             pinText.setText("");
-        }
-        else if (ae.getSource()==singin){
+        } else if (ae.getSource() == singin) {
             connectJDBC con = connectJDBC.getInstance();
-            String cardnumber = cardText.getText();
+            cardnumber = cardText.getText();
             String pinnumber = pinText.getText();
             String query = "SELECT * FROM login WHERE cardnumber ='" + cardnumber + "' AND pinnumber ='" + pinnumber + "'";
 
             try {
                 ResultSet rs = con.s.executeQuery(query);
-                if (rs.next()){
+                if (rs.next()) {
+                    String userEmail = getUserEmailByCardNumber(cardnumber);
+
+                    if (userEmail != null) {
+                        EmailUtility.sendEmail(userEmail, "Login Successful", "You have successfully logged in.");
+                    }
                     setVisible(false);
                     new transactions(pinnumber).setVisible(true);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Incorrect Card Number or Pin");
                 }
-                else {
-                    JOptionPane.showMessageDialog(null,"Incorrect Card Number or Pin");
-                }
-            }catch (Exception e){
+            } catch (Exception e) {
                 System.out.println(e);
-            }finally {
+            } finally {
                 if (con != null && con.s != null) {
                     try {
                         con.s.close();
@@ -108,14 +112,34 @@ public class Login extends JFrame implements ActionListener {
                     }
                 }
             }
-        }
-        else if (ae.getSource()==singup){
+        } else if (ae.getSource() == singup) {
             setVisible(false);
             new SignupOne().setVisible(true);
         }
     }
-    public static void main(String[] args) {
+    private String getUserEmailByCardNumber (String cardnumber){
+        String email = null;
+        String url = "jdbc:mysql://localhost:3306/bankmanagementsystem";
+        String username = "root";
+        String password = "root";
+        String query = "SELECT email FROM SignupThree WHERE cardnumber = ?";
 
+
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setString(1, cardnumber);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                email = resultSet.getString("email");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return email;
+    }
+    public static void main(String[] args) {
         new Login();
     }
 }

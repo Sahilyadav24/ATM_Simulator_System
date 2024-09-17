@@ -6,8 +6,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileWriter;
-import java.io.IOException;
 
 public class SignupTwo extends JFrame implements ActionListener {
 
@@ -184,7 +182,6 @@ public class SignupTwo extends JFrame implements ActionListener {
             setVisible(false);
                 new SignupThree(formno).setVisible(true);
         } else if (ae.getSource() == back) {
-            // Handle Back Button
             setVisible(false);
             new SignupOne().setVisible(true);
         }
@@ -202,14 +199,8 @@ public class SignupTwo extends JFrame implements ActionListener {
         userData.addProperty("adhar", adhar);
         userData.addProperty("seniorcitizen", seniorcitizen == 1 ? "Yes" : "No");
 
-        // Save the data to local storage
-        try (FileWriter fileWriter = new FileWriter("SignupTwo.json")) {
-            fileWriter.write(userData.toString());
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Error saving data: " + e.getMessage());
-        }
+        FileUtils.writeToFile(userData, "Signuptwo.json");
     }
-
     public static void main(String[] args) {
 
             new SignupTwo("").setVisible(true);

@@ -76,7 +76,7 @@ public class FastCash extends JFrame implements ActionListener {
             new transactions(pinnumber).setVisible(true);
         } else {
             String amount = ((JButton) ae.getSource()).getText().substring(3);
-//            connectJDBC con = new connectJDBC();
+
             connectJDBC con = connectJDBC.getInstance();
             try (Statement stmt = con.getConnection().createStatement()) {
                 ResultSet rs = stmt.executeQuery("SELECT * FROM bank WHERE pinnumber ='" + pinnumber + "'");

@@ -7,8 +7,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -229,12 +227,8 @@ public class SignupOne extends JFrame implements ActionListener {
         userData.addProperty("state", state);
         userData.addProperty("pin", pin);
 
-        try (FileWriter fileWriter = new FileWriter("SignupOne.json")) {
-            fileWriter.write(userData.toString());
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Error saving data: " + e.getMessage());
-            return;
-        }// Check which button was clicked
+        FileUtils.writeToFile(userData, "Signup.json");
+
         if (ae.getSource() == next) {
             // Validate that required fields are filled
             if (name.equals("") || dobDate == null || gender == null || email.equals("") || address.equals("") || state.equals("") || pin.equals("") || maritalStatus == null) {

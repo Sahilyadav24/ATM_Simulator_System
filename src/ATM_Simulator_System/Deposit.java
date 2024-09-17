@@ -57,7 +57,6 @@ public class Deposit extends JFrame implements ActionListener {
         setLocation(300, 0);
         setVisible(true);
     }
-
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource() == deposit) {
             String number = amount.getText().trim();

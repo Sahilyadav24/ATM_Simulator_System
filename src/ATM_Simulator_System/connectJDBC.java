@@ -25,6 +25,7 @@ public class connectJDBC {
 
             c = DriverManager.getConnection(url, username, password);
             s = c.createStatement();
+            c.setAutoCommit(true);
             System.out.println("Connection successful");
         } catch (SQLException e) {
             e.printStackTrace();
