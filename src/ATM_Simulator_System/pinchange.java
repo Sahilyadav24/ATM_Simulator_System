@@ -4,9 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class pinchange extends JFrame implements ActionListener {
     JPasswordField pin, repin;
@@ -117,6 +115,12 @@ public class pinchange extends JFrame implements ActionListener {
                     pstmt2.executeUpdate();
                     pstmt3.executeUpdate();
 
+                    String userEmail = getUserEmailByPinNumber(pinnumber);
+                    if (userEmail != null) {
+                        EmailUtility.sendEmail(userEmail, "PIN Change Notification",
+                                "Your PIN has been successfully changed.");
+                    }
+
                     JOptionPane.showMessageDialog(null, "PIN changed successfully.");
                     setVisible(false);
                     new transactions(rpin).setVisible(true);
@@ -144,5 +148,24 @@ public class pinchange extends JFrame implements ActionListener {
             setVisible(false);
             new transactions(pinnumber).setVisible(true);
         }
+    }
+    private String getUserEmailByPinNumber(String pinnumber) {
+        String email = null;
+        String query = "SELECT email FROM SignupThree WHERE cardnumber = (SELECT cardnumber FROM Login WHERE pinnumber = ?)";
+
+        // Use the singleton connection instance
+        try (Connection connection = connectJDBC.getInstance().getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setString(1, pinnumber);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                email = resultSet.getString("email");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return email;
     }
 }

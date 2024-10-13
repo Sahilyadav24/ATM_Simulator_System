@@ -7,7 +7,7 @@ import java.awt.event.ActionListener;
 import java.sql.*;
 
 public class Login extends JFrame implements ActionListener {
-    JButton singup,clear,singin;
+    JButton singup,clear,singin,otpRequest,forgotCardNumberButton;
     JTextField cardText;
     JPasswordField pinText;
 
@@ -70,6 +70,20 @@ public class Login extends JFrame implements ActionListener {
         singup.addActionListener(this);
         add(singup);
 
+        otpRequest = new JButton("Forgot Password");
+        otpRequest.setBounds(300, 380, 200, 30);
+        otpRequest.setBackground(Color.black);
+        otpRequest.setForeground(Color.WHITE);
+        otpRequest.addActionListener(this);
+        add(otpRequest);
+
+
+        forgotCardNumberButton = new JButton("Forgot Card Number");
+        forgotCardNumberButton.setBounds(300, 420, 200, 30);
+        forgotCardNumberButton.setBackground(Color.black);
+        forgotCardNumberButton.setForeground(Color.WHITE);
+        forgotCardNumberButton.addActionListener(this);
+        add(forgotCardNumberButton);
 
         getContentPane().setBackground(Color.cyan);
 
@@ -99,6 +113,10 @@ public class Login extends JFrame implements ActionListener {
                     setVisible(false);
                     new transactions(pinnumber).setVisible(true);
                 } else {
+                    String userEmail = getUserEmailByCardNumber(cardnumber);
+                    if (userEmail != null) {
+                        EmailUtility.sendEmail(userEmail, "Unsuccessful Login Attempt", "Your card number was found, but the PIN you entered is incorrect.");
+                    }
                     JOptionPane.showMessageDialog(null, "Incorrect Card Number or Pin");
                 }
             } catch (Exception e) {
@@ -116,29 +134,79 @@ public class Login extends JFrame implements ActionListener {
             setVisible(false);
             new SignupOne().setVisible(true);
         }
-    }
-    private String getUserEmailByCardNumber (String cardnumber){
-        String email = null;
-        String url = "jdbc:mysql://localhost:3306/bankmanagementsystem";
-        String username = "root";
-        String password = "root";
-        String query = "SELECT email FROM SignupThree WHERE cardnumber = ?";
+        else if (ae.getSource() == otpRequest) {
+            String enteredEmail = JOptionPane.showInputDialog("Enter your registered email:").trim();
 
+            if (enteredEmail != null && !enteredEmail.isEmpty()) {
+                String[] userDetails = getUserDetailsByEmail(enteredEmail);
 
-        try (Connection connection = DriverManager.getConnection(url, username, password);
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                if (userDetails != null) {  // Email found in the database
+                    String otp = generateOTP();
+                    String emailContent = String.format(
+                            "Your OTP code for password recovery is: %s\nYour Account Type is: %s",
+                            otp, userDetails[1]
+                    );
 
-            preparedStatement.setString(1, cardnumber);
-            ResultSet resultSet = preparedStatement.executeQuery();
+                    EmailUtility.sendEmail(enteredEmail, "Your OTP Code", emailContent);
+                    JOptionPane.showMessageDialog(null, "An OTP has been sent to your registered email.");
 
-            if (resultSet.next()) {
-                email = resultSet.getString("email");
+                    // Open OTP verification window for password reset
+                    new OTPVerificationWindow(enteredEmail, otp).setVisible(true);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Email not found.");
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Email cannot be empty.");
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-        return email;
+
+
+        else if (ae.getSource() == forgotCardNumberButton) {
+            String userEmail = JOptionPane.showInputDialog("Enter your registered email:");
+            if (userEmail != null && !userEmail.isEmpty()) {
+                // Generate and send OTP
+                String otp = generateOTP();
+                EmailUtility.sendEmail(userEmail, "Your OTP Code", "Your OTP code for card number retrieval is: " + otp);
+                JOptionPane.showMessageDialog(this, "An OTP has been sent to your registered email.");
+
+                // Open OTP verification window
+                new OTPForCardNumberRetrievalWindow(userEmail, otp).setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(this, "Email cannot be empty.");
+            }
+        }
+
     }
+
+    private String generateOTP() {
+        return String.valueOf((int) (Math.random() * 1000000));
+    }
+private String getUserEmailByCardNumber(String cardnumber) {
+    String query = "SELECT email FROM Signupthree WHERE cardnumber = ?";
+    try (PreparedStatement ps = connectJDBC.getInstance().getConnection().prepareStatement(query)) {
+        ps.setString(1, cardnumber);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            return rs.getString("email");
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return null;
+}
+public String[] getUserDetailsByEmail(String email) {
+    String query = "SELECT email, accountType FROM Signupthree WHERE email = ?";
+    try (PreparedStatement ps = connectJDBC.getInstance().getConnection().prepareStatement(query)) {
+        ps.setString(1, email);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            return new String[]{rs.getString("email"), rs.getString("accountType")};
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return null;
+}
     public static void main(String[] args) {
         new Login();
     }

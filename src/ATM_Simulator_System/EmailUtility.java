@@ -9,7 +9,7 @@ public class EmailUtility {
     private static final String HOST = "smtp.gmail.com";
     private static final String PORT = "587"; // TLS port for Gmail
     private static final String USERNAME = "skyadav98968@gmail.com";
-    private static final String PASSWORD ="fkoi yhck ebjv xauc"; //"fyqlfwtekcjnity"; //"fyql fwte kcjnity";
+    private static final String PASSWORD ="fkoi yhck ebjv xauc"; 
 
     public static void sendEmail(String to, String subject, String body) {
         // Set up properties for the email server

@@ -4,9 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -80,6 +78,10 @@ public class Deposit extends JFrame implements ActionListener {
 
                     pstmt.executeUpdate();
                     JOptionPane.showMessageDialog(null, "Rs " + number + " Deposited Successfully");
+                    String userEmail = getUserEmailByCardNumber(pinnumber);;
+                    if (userEmail != null) {
+                        EmailUtility.sendEmail(userEmail, "Deposit Notification", "You have successfully deposited Rs " + number + " into your account.");
+                    }
                     setVisible(false);
                     new transactions(pinnumber).setVisible(true);
                 } catch (SQLException e) {
@@ -90,6 +92,29 @@ public class Deposit extends JFrame implements ActionListener {
             setVisible(false);
             new transactions(pinnumber).setVisible(true);
         }
+    }
+
+    // Assuming you have a method to get email by card number
+    private String getUserEmailByCardNumber(String pinnumber) {
+        String email = null;
+        String url = "jdbc:mysql://localhost:3306/bankmanagementsystem";
+        String username = "root";
+        String password = "root";
+        String query = "SELECT email FROM SignupThree WHERE cardnumber = (SELECT cardnumber FROM Login WHERE pinnumber = ?)";
+
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setString(1, pinnumber);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                email = resultSet.getString("email");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return email;
     }
 
     public static void main(String[] args) {

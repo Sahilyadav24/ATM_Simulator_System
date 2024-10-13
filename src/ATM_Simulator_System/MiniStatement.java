@@ -4,10 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class MiniStatement extends JFrame  {
     String pinnumber;
@@ -88,6 +85,13 @@ public class MiniStatement extends JFrame  {
                     miniStatementText.append("</html>");
                     mini.setText(miniStatementText.toString());
                     balancee.setText("Your total balance is Rs = " + totalbal);
+
+                    String userEmail = getUserEmailByPinNumber(pinnumber);
+                    if (userEmail != null) {
+                        EmailUtility.sendEmail(userEmail, "Mini Statement Notification",
+                                "Your mini statement is:\n" + miniStatementText.toString() +
+                                        "\nYour total balance is Rs " + totalbal + ".");
+                    }
                 }
             }
             catch (Exception e) {
@@ -108,6 +112,28 @@ public class MiniStatement extends JFrame  {
         setLocation(20, 20);
         getContentPane().setBackground(Color.white);
     }
+
+    private String getUserEmailByPinNumber(String pinnumber) {
+        String email = null;
+        String query = "SELECT email FROM SignupThree WHERE cardnumber = (SELECT cardnumber FROM Login WHERE pinnumber = ?)";
+
+        // Use the singleton connection instance
+        try (Connection connection = connectJDBC.getInstance().getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setString(1, pinnumber);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                email = resultSet.getString("email");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return email;
+    }
+
+
     public static void main(String[] args) {
         new MiniStatement(" ");
     }

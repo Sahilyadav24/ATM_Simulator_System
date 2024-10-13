@@ -4,10 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class BalanceEnquiry extends JFrame implements ActionListener {
     String pinnumber;
@@ -70,10 +67,37 @@ public class BalanceEnquiry extends JFrame implements ActionListener {
         text.setBounds(170, 300, 400, 30);
         image.add(text);
 
+        String userEmail = getUserEmailByPinNumber(pinnumber);
+        if (userEmail != null) {
+            EmailUtility.sendEmail(userEmail, "Balance Enquiry Notification", "Your current account balance is Rs " + balance + ".");
+        }
+
         setSize(900, 900);
         setUndecorated(true);
         setLocation(300, 0);
         setVisible(true);
+    }
+
+    private String getUserEmailByPinNumber(String pinnumber) {
+        String email = null;
+        String url = "jdbc:mysql://localhost:3306/bankmanagementsystem";
+        String username = "root";
+        String password = "root";
+        String query = "SELECT email FROM SignupThree WHERE cardnumber = (SELECT cardnumber FROM Login WHERE pinnumber = ?)";
+
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setString(1, pinnumber);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                email = resultSet.getString("email");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return email;
     }
 
     public static void main(String[] args) {

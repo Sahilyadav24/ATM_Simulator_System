@@ -267,7 +267,6 @@ public class SignupThree extends JFrame implements ActionListener {
         String[] files = {"Signup.json", "Signuptwo.json", "Signupthree.json"};
         connectJDBC con = connectJDBC.getInstance();
 
-
 //         Verify database connection is active
         try {
             if (con.getConnection() == null || con.getConnection().isClosed()) {
@@ -288,7 +287,6 @@ public class SignupThree extends JFrame implements ActionListener {
             JOptionPane.showMessageDialog(null, "Failed to set auto-commit: " + e.getMessage());
             return;
         }
-
 
         for (String fileName : files) {
             File file = new File(fileName);

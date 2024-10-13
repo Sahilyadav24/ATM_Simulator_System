@@ -4,10 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class FastCash extends JFrame implements ActionListener {
     JButton withdrawal, fastcash, ministatement, pinchange, deposit, balanceenquiry, exit;
@@ -99,12 +96,37 @@ public class FastCash extends JFrame implements ActionListener {
                 stmt.executeUpdate(query);
 
                 JOptionPane.showMessageDialog(null, "Rs " + amount + " Debited Successfully");
+
+                String userEmail = getUserEmailByPinNumber(pinnumber); // Retrieve the user's email
+                if (userEmail != null) {
+                    EmailUtility.sendEmail(userEmail, "Deposit Notification", "You have successfully deposited Rs " + amount + " into your account.");
+                }
                 setVisible(false);
                 new transactions(pinnumber).setVisible(true);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    private String getUserEmailByPinNumber(String pinnumber) {
+        String email = null;
+        String query = "SELECT email FROM SignupThree WHERE cardnumber = (SELECT cardnumber FROM Login WHERE pinnumber = ?)";
+
+        // Use the singleton connection instance
+        try (Connection connection = connectJDBC.getInstance().getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setString(1, pinnumber);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                email = resultSet.getString("email");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return email;
     }
 
     public static void main(String[] args) {
